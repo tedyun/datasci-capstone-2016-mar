@@ -1,16 +1,16 @@
 
 
 ## Get the maximum line length
-getMaximumLineLength <- function (dataset) {
-  maxLength <- 0
-  for (line in dataset) {
-    curLength <- nchar(line)
-    if (curLength > maxLength) {
-      maxLength <- curLength
-    }
-  }
-  return(maxLength)
-}
+# getMaximumLineLength <- function (dataset) {
+#   maxLength <- 0
+#   for (line in dataset) {
+#     curLength <- nchar(line)
+#     if (curLength > maxLength) {
+#       maxLength <- curLength
+#     }
+#   }
+#   return(maxLength)
+# }
 
 ## Tokenize a single line
 # tokenizeLine <- function (line) {
@@ -41,16 +41,16 @@ getMaximumLineLength <- function (dataset) {
 # }
 
 ## Find the line numbers contaning a certain string
-getLinesContainingString <- function (dataset, keyword) {
-  lineNumbers <- NULL
-  for (i in 1:length(dataset)) {
-    line <- dataset[i]
-    if (length(grep(keyword, line, fixed=TRUE)) > 0) {
-      lineNumbers <- c(lineNumbers, i)
-    }
-  }
-  return(lineNumbers)
-}
+# getLinesContainingString <- function (dataset, keyword) {
+#   lineNumbers <- NULL
+#   for (i in 1:length(dataset)) {
+#     line <- dataset[i]
+#     if (length(grep(keyword, line, fixed=TRUE)) > 0) {
+#       lineNumbers <- c(lineNumbers, i)
+#     }
+#   }
+#   return(lineNumbers)
+# }
 
 # loveLines <- getLinesContainingString(dataset_twitter, 'love')
 # hateLines <- getLinesContainingString(dataset_twitter, 'hate')
@@ -100,6 +100,9 @@ findLinesWithSubstring <- function (sVec, sSub) {
   return(vec)
 }
 
+
+#### TOKENIZATION ####
+
 ## Break a line into sublines, each separated by punctuation (.!?), quotation ("'), colons (:;), or dash ( - , -- )
 subLineRegex = "( - )|( -- )|([.!?\":;]+[ ]*[.!?\":;]*)"
 splitRegex = "[-,\t\n\r ]+"
@@ -117,7 +120,15 @@ tokenizeLine <- function (sLine) {
   }
   tokList
 }
-
+getNumberOfWordsInLine <- function (sLine) {
+  tokenized <- tokenizeLine(sLine)
+  len <- 0
+  for (i in 1:length(tokenized)){
+    subLine <- tokenized[[i]]
+    len <- len + length(subLine)
+  }
+  len
+}
 
 blogs <- readFileLines("final/en_US/en_US.blogs.txt")
 news <- readFileLines("final/en_US/en_US.news.txt")
@@ -126,6 +137,10 @@ twitter <- readFileLines("final/en_US/en_US.twitter.txt")
 blogLines <- nchar(blogs)
 newsLines <- nchar(news)
 twitterLines <- nchar(twitter)
+
+newsWords <- sapply(news, getNumberOfWordsInLine, simplify=TRUE, USE.NAMES = FALSE)
+blogWords <- sapply(blogs, getNumberOfWordsInLine, simplify=TRUE, USE.NAMES = FALSE)
+twitterWords <- sapply(twitter, getNumberOfWordsInLine, simplify=TRUE, USE.NAMES = FALSE)
 
 # getMaxLineLength(blogs)
 # getMaxLineLength(news)
