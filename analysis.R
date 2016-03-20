@@ -1,4 +1,4 @@
-
+library(hash)
 
 ## Get the maximum line length
 # getMaximumLineLength <- function (dataset) {
@@ -130,6 +130,35 @@ getNumberOfWordsInLine <- function (sLine) {
   len
 }
 
+countWordFrequency <- function (listTokenized) {
+  dict <- hash()
+  for (i in 1:length(listTokenized)) {
+    if (i %% 10000 == 0) {
+      print (paste(i, "-th line processed."))
+    }
+    sublist <- listTokenized[[i]]
+    for (j in 1:length(sublist)) {
+      sVec <- sublist[[j]]
+      for (k in 1:length(sVec)){
+        sWord <- sVec[k]
+        if (!is.na(sWord) && length(sWord) > 0 && nchar(sWord) > 0) {
+          sWord <- tolower(sWord)
+          if (length(sWord) > 0 && nchar(sWord) > 0) {
+            dict[[sWord]] <- if (is.null(dict[[sWord]])) 1 else dict[[sWord]] + 1
+          }
+        }
+      }
+    }
+  }
+  dict
+}
+
+getTopNWords <- function (wordFreqHash, N) {
+  val <- values(wordFreqHash)
+  val1 <- sort(val, decreasing=TRUE)
+  val1[1:N]
+}
+
 blogs <- readFileLines("final/en_US/en_US.blogs.txt")
 news <- readFileLines("final/en_US/en_US.news.txt")
 twitter <- readFileLines("final/en_US/en_US.twitter.txt")
@@ -141,6 +170,26 @@ twitterLines <- nchar(twitter)
 newsWords <- sapply(news, getNumberOfWordsInLine, simplify=TRUE, USE.NAMES = FALSE)
 blogWords <- sapply(blogs, getNumberOfWordsInLine, simplify=TRUE, USE.NAMES = FALSE)
 twitterWords <- sapply(twitter, getNumberOfWordsInLine, simplify=TRUE, USE.NAMES = FALSE)
+
+newsTokenized <- lapply(news, tokenizeLine)
+blogTokenized <- lapply(blogs, tokenizeLine)
+twitterTokenized <- lapply(twitter, tokenizeLine)
+
+newsWordFreqHash <- countWordFrequency(newsTokenized)
+blogWordFreqHash <- countWordFrequency(blogTokenized)
+twitterWordFreqHash <- countWordFrequency(twitterTokenized)
+
+newsTop50 <- getTopNWords(newsWordFreqHash, 50)
+
+# saveRDS(blogTokenized, "blogTokenized.rds")
+# saveRDS(newsTokenized, "newsTokenized.rds")
+# saveRDS(twitterTokenized, "twitterTokenized.rds")
+
+# saveRDS(blogLines, "blogLines.rds")
+# saveRDS(newsLines, "newsLines.rds")
+# saveRDS(twitterLines, "twitterLines.rds")
+
+saveRDS(newsWordFreqHash, "newsWordFreqHash.rds")
 
 # getMaxLineLength(blogs)
 # getMaxLineLength(news)

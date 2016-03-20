@@ -1,21 +1,83 @@
 ---
-title: "Data Science Capstone Exploratory Analysis"
+title: "SwiftKey Dataset - Exploratory Analysis and Planning"
 author: "Ted Yun"
 output: html_document
 ---
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+## Introduction
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+In this report we perform exploratory analysis on the SwiftKey dataset and summarize a plan to build a prediction algorithm based on the dataset.
 
-```{r}
-summary(cars)
+## Data Statistics
+
+The SwiftKey dataset consists of text in four different languages, namely German, English, Finnish, and Russian. In this analysis we will only consider text in English language. English language corpus in the dataset is from three different sources - blogs, news, and twitter.
+
+```{r, echo=FALSE, results='hide', cache=TRUE}
+blogLines <- readRDS("blogLines.rds")
+newsLines <- readRDS("newsLines.rds")
+twitterLines <- readRDS("twitterLines.rds")
+blogWords <- readRDS("blogWords.rds")
+newsWords <- readRDS("newsWords.rds")
+twitterWords <- readRDS("twitterWords.rds")
+newsTop50 <- readRDS("newsTop50.rds")
 ```
 
-You can also embed plots, for example:
+The three datasets differ drastically in terms of the number of texts and the length of each text. In terms of the number of texts in a dataset, the twitter data have the most texts containing 2,340,148 texts, followed by the blogs data (899,288 texts), and the news data (77,259 texts).
+
+Now let us look at the number of letters in each text. The text in blog data and the text in news data have similar length, containing on average 231.7 letters and 203 letters respectively. The text in twitter data is much shorter, 68.8 letters on average, which is not surprising as twitter limits the number of characters in each tweet.
+
+Blog data letter count:
+```{r, echo=FALSE}
+summary(blogLines)
+```
+
+News data letter count:
+```{r, echo=FALSE}
+summary(newsLines)
+```
+
+Twitter data letter count:
+```{r, echo=FALSE}
+summary(twitterLines)
+```
+
+Now let us look at the number of words in each text.
+
+Blog data word count:
+```{r, echo=FALSE}
+summary(blogWords)
+```
+
+News data word count:
+```{r, echo=FALSE}
+summary(newsWords)
+```
+
+Twitter data word count:
+```{r, echo=FALSE}
+summary(twitterWords)
+```
+
+Here are histograms of word counts in three datasets. Not surprisingly, the news dataset exhibits the most well-formed bell curve among the three, while in the blog and twitter dataset a large portion of the texts are short.
+
+```{r, echo=FALSE, fig.height=5}
+hist(blogWords, breaks=1000, xlab="Number of Words", ylab="Frequency", main="Word Count in Blog Data", xlim=c(0, 250))
+```
 
 ```{r, echo=FALSE}
-plot(cars)
+hist(newsWords, breaks=1000, xlab="Number of Words", ylab="Frequency", main="Word Count in News Data", xlim=c(0, 150))
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r, echo=FALSE}
+hist(twitterWords, breaks=50, xlab="Number of Words", ylab="Frequency", main="Word Count in Twitter Data", xlim=c(0, 35))
+```
+
+Finally, let us look more closely at the contents of the dataset. We take the news dataset and tokenize the sentences and look at which words were the most frequently used. Here is a list of top 50 words that was used in the news data.
+
+```{r, echo=FALSE}
+newsTop50
+```
+
+
+## Prediction Algorithm Introduction
+
