@@ -1,12 +1,12 @@
 ---
-title: "SwiftKey Dataset - Exploratory Analysis and Planning"
+title: "SwiftKey Dataset - Exploratory Analysis and Prediction Algorithm Summary"
 author: "Ted Yun"
 output: html_document
 ---
 
 ## Introduction
 
-In this report we perform exploratory analysis on the SwiftKey dataset and summarize a plan to build a prediction algorithm based on the dataset.
+In this report we perform exploratory analysis on the SwiftKey datasets and summarize a plan for building a prediction algorithm based on the datasets.
 
 ## Data Statistics
 
@@ -24,60 +24,66 @@ newsTop50 <- readRDS("newsTop50.rds")
 
 The three datasets differ drastically in terms of the number of texts and the length of each text. In terms of the number of texts in a dataset, the twitter data have the most texts containing 2,340,148 texts, followed by the blogs data (899,288 texts), and the news data (77,259 texts).
 
-Now let us look at the number of letters in each text. The text in blog data and the text in news data have similar length, containing on average 231.7 letters and 203 letters respectively. The text in twitter data is much shorter, 68.8 letters on average, which is not surprising as twitter limits the number of characters in each tweet.
+The text in blog data and the text in news data have similar length, containing on average 231.7 letters and 203 letters respectively. The text in twitter data is much shorter, 68.8 letters on average, which is not surprising as twitter limits the number of characters in each tweet.
 
-Blog data letter count:
+Blog data letter counts:
 ```{r, echo=FALSE}
 summary(blogLines)
 ```
 
-News data letter count:
+News data letter counts:
 ```{r, echo=FALSE}
 summary(newsLines)
 ```
 
-Twitter data letter count:
+Twitter data letter counts:
 ```{r, echo=FALSE}
 summary(twitterLines)
 ```
 
-Now let us look at the number of words in each text.
+Let us look at the number of words in each text.
 
-Blog data word count:
+Blog data word counts:
 ```{r, echo=FALSE}
 summary(blogWords)
 ```
 
-News data word count:
+News data word counts:
 ```{r, echo=FALSE}
 summary(newsWords)
 ```
 
-Twitter data word count:
+Twitter data word counts:
 ```{r, echo=FALSE}
 summary(twitterWords)
 ```
 
-Here are histograms of word counts in three datasets. Not surprisingly, the news dataset exhibits the most well-formed bell curve among the three, while in the blog and twitter dataset a large portion of the texts are short.
+Here are histograms of the word counts in three datasets. Not surprisingly, the news dataset exhibits the most well-formed bell curve among the three, while in the blog and twitter dataset a large portion of the texts are short. On average, the text in the blog data has 42 words, the text in the news data has 35 words, and the text in the twitter data has only 13 words.
 
-```{r, echo=FALSE, fig.height=5}
-hist(blogWords, breaks=1000, xlab="Number of Words", ylab="Frequency", main="Word Count in Blog Data", xlim=c(0, 250))
+```{r, echo=FALSE, fig.height=4}
+hist(blogWords, breaks=1000, xlab="Number of Words", ylab="Frequency", main="Word Counts in Blog Data", xlim=c(0, 250))
 ```
 
-```{r, echo=FALSE}
-hist(newsWords, breaks=1000, xlab="Number of Words", ylab="Frequency", main="Word Count in News Data", xlim=c(0, 150))
+```{r, echo=FALSE, fig.height=4}
+hist(newsWords, breaks=1000, xlab="Number of Words", ylab="Frequency", main="Word Counts in News Data", xlim=c(0, 150))
 ```
 
-```{r, echo=FALSE}
-hist(twitterWords, breaks=50, xlab="Number of Words", ylab="Frequency", main="Word Count in Twitter Data", xlim=c(0, 35))
+```{r, echo=FALSE, fig.height=4}
+hist(twitterWords, breaks=50, xlab="Number of Words", ylab="Frequency", main="Word Counts in Twitter Data", xlim=c(0, 35))
 ```
 
-Finally, let us look more closely at the contents of the dataset. We take the news dataset and tokenize the sentences and look at which words were the most frequently used. Here is a list of top 50 words that was used in the news data.
+Finally, let us look more closely at the contents of the dataset. We take the news dataset and tokenize the sentences into words. In our analysis we found 94083 different words (case-insensitive) in the news data. Here is the list of top 50 words that was used in the news data, along with the frequencies they appeared.
 
 ```{r, echo=FALSE}
 newsTop50
 ```
 
 
-## Prediction Algorithm Introduction
+## Prediction Algorithm
+
+Our final goal is to create a lightweight application -- suitable for mobile environment -- that predicts the next word a user wants to type in. We will use n-gram model for the prediction. Using this n-gram model, we will predict the next word based on the previous n words that appeared in the text.
+
+Given the restriction of processing speed and memory in our current mobile devices, we plan to use the two-gram model, in other words, the previous two words will be used to predict the user's next word. When the combination of the previous two words were never seen in our data, we will fall back to the one-gram model, using only the last word to predict the next word.
+
+The directed-graph data structure will be used to store the two-gram model. Each vertex of the graph will store a two-gram, and each outgoing edge will store the probability of the next two-gram appearing in a text. A directed graph can be implemented as a matrix.
 

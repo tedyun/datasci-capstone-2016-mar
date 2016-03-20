@@ -1,0 +1,7 @@
+name: Publish Document
+account: rpubs
+server: rpubs.com
+bundleId:
+        https://api.rpubs.com/api/v1/document/163457/177b6be187c544a3a787250066f9fb7d
+url: http://rpubs.com/tedyun/163457
+when: 1458516138.3698
