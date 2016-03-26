@@ -153,6 +153,31 @@ countWordFrequency <- function (listTokenized) {
   dict
 }
 
+buildWordDictionary <- function (listTokenized, dictWordToIndex, dictIndexToWord) {
+  idx <- 1
+  for (i in 1:length(listTokenized)) {
+    if (i %% 10000 == 0) {
+      print (paste(i, "-th line processed."))
+    }
+    sublist <- listTokenized[[i]]
+    for (j in 1:length(sublist)) {
+      sVec <- sublist[[j]]
+      for (k in 1:length(sVec)){
+        sWord <- sVec[k]
+        if (!is.na(sWord) && length(sWord) > 0 && nchar(sWord) > 0) {
+          sWord <- tolower(sWord)
+          if (is.null(dictWordToIndex[[sWord]])) {
+            dictWordToIndex[[sWord]] <- idx
+            dictIndexToWord[[toString(idx)]] <- sWord
+            idx <- idx + 1
+          }
+        }
+      }
+    }
+  }
+  idx
+}
+
 getTopNWords <- function (wordFreqHash, N) {
   val <- values(wordFreqHash)
   val1 <- sort(val, decreasing=TRUE)
@@ -199,3 +224,13 @@ saveRDS(newsWordFreqHash, "newsWordFreqHash.rds")
 # getNumberOfLinesWithSubstring(twitter, "hate")
 # 
 # findLinesWithSubstring(twitter, "biostats")
+
+wordToIndexDict <- hash()
+indexToWordDict <- hash()
+buildWordDictionary(newsTokenized, wordToIndexDict, indexToWordDict)
+buildWordDictionary(blogTokenized, wordToIndexDict, indexToWordDict)
+buildWordDictionary(twitterTokenized, wordToIndexDict, indexToWordDict)
+saveRDS(wordToIndexDict, "wordToIndexDict.rds")
+saveRDS(indexToWordDict, "indexToWordDict.rds")
+
+
