@@ -293,6 +293,51 @@ trainMatrix <- function (mat, listTokenized, wordToIndexDict) {
   mat
 }
 
+combineMatrices <- function (mat1, mat2) {
+  mat <- rbind(mat1, matrix(NA, nrow = nrow(mat2), ncol = ncol(mat2)))
+  
+  # find the current row
+  curRow <- 1
+  if (nrow(mat) > 0) {
+    for (curRow in 1:nrow(mat)) {
+      if (is.na(mat[curRow, 1])) {
+        break
+      }
+    }
+  }
+  
+  print("Building index..")
+  hashIndex <- hash()
+  if (curRow > 1) {
+    for (i in 1:(curRow - 1)) {
+      key <- paste(mat[i, 1], mat[i, 2], mat[i, 3])
+      hashIndex[[key]] <- i
+    }
+  }
+  print("Index built.")
+  
+  for (i in 1:nrow(mat2)) {
+    if (is.na(mat2[i, 1])) {
+      break
+    }
+    n1 <- mat2[i, 1]
+    n2 <- mat2[i, 2]
+    n3 <- mat2[i, 3]
+    n4 <- mat2[i, 4]
+    hashkey <- paste(n1, n2, n3)
+    idx <- hashIndex[[hashkey]]
+    if (!is.null(idx)) {
+      mat[idx, 4] <- mat[idx, 4] + n4
+    } else {
+      # Growing 1 row
+      mat[curRow,] <- c(n1, n2, n3, n4)
+      hashIndex[[hashkey]] <- curRow
+      curRow <- curRow + 1
+    }
+  }
+  mat
+}
+
 predict <- function (mat, sWord1, sWord2, wordToIndexDict, indexToWordVect) {
   sub <- mat[which(mat[,1] == wordToIndexDict[[sWord1]] & mat[,2] == wordToIndexDict[[sWord2]], arr.ind=TRUE),]
   sub <- data.frame(sub[,3:4])
