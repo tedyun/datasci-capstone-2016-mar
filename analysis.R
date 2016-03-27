@@ -215,17 +215,22 @@ findRow3 <- function (mat, row, curRow) {
 # 4*N matrix
 trainMatrix <- function (mat, listTokenized, wordToIndexDict) {
   # find the current row
-  for (curRow in 1:nrow(mat)) {
-    if (is.na(mat[curRow, 1])) {
-      break
+  curRow <- 1
+  if (nrow(mat) > 0) {
+    for (curRow in 1:nrow(mat)) {
+      if (is.na(mat[curRow, 1])) {
+        break
+      }
     }
   }
   print(paste("Starting at", curRow, "th row"))
   print("Building index..")
   hashIndex <- hash()
-  for (i in 1:(curRow - 1)) {
-    key <- paste(mat[i, 1], mat[i, 2], mat[i, 3])
-    hashIndex[[key]] <- i
+  if (curRow > 1) {
+    for (i in 1:(curRow - 1)) {
+      key <- paste(mat[i, 1], mat[i, 2], mat[i, 3])
+      hashIndex[[key]] <- i
+    }
   }
   print("Index built.")
   
@@ -359,9 +364,13 @@ saveRDS(matTrained, "matTrained_news1000.rds")
 matTrained <- trainMatrix(matTrained, newsTokenized[1001:2000], wordToIndexDict)
 saveRDS(matTrained, "matTrained_news2000.rds")
 
+#reading necessary components
 newsTokenized <- readRDS("newsTokenized.rds")
+blogTokenized <- readRDS("blogTokenized.rds")
+twitterTokenized <- readRDS("twitterTokenized.rds")
 wordToIndexDict <- readRDS("wordToIndexDict.rds")
 indexToWordVect <- readRDS("indexToWordVect.rds")
+
 matTrained <- readRDS("matTrained_news2000.rds")
 
 matTrained <- trainMatrix(matTrained, newsTokenized[2001:3000], wordToIndexDict)
@@ -369,3 +378,9 @@ saveRDS(matTrained, "matTrained_news3000.rds")
 
 matTrained <- trainMatrix(matTrained, newsTokenized[3001:10000], wordToIndexDict)
 saveRDS(matTrained, "matTrained_news10000.rds")
+
+#blog
+blogmatTrained <- matrix(NA, nrow = 1000, ncol = 4)
+blogmatTrained <- trainMatrix(blogmatTrained, blogTokenized[0:10000], wordToIndexDict)
+saveRDS(blogmatTrained, "matTrained_blog10000.rds")
+
