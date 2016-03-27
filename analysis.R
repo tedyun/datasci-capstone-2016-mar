@@ -184,6 +184,98 @@ getTopNWords <- function (wordFreqHash, N) {
   val1[1:N]
 }
 
+
+growRow <- function (mat) {
+  rowN <- nrow(mat)
+  colN <- ncol(mat)
+  mat2 <- matrix(NA, nrow=rowN, ncol=colN)
+  return(rbind(mat, mat2))
+}
+
+isString <- function (sWord) {
+  return(!is.na(sWord) && length(sWord) > 0 && nchar(sWord) > 0)
+}
+
+findRow3 <- function (mat, row, curRow) {
+  found <- FALSE
+  limit <- min(curRow, nrow(mat))
+  for (idx in 1:limit) {
+    if (identical(mat[idx,][1:3], row)) {
+      found <- TRUE
+      break
+    }
+  }
+  if (found) {
+    return(idx)
+  } else {
+    return(-1)
+  }
+}
+
+# 4*N matrix
+trainMatrix <- function (mat, listTokenized, wordToIndexDict) {
+  # find the current row
+  for (curRow in 1:nrow(mat)) {
+    if (is.na(mat[curRow, 1])) {
+      break
+    }
+  }
+  print(paste("Starting at", curRow, "th row"))
+  for (i in 1:length(listTokenized)) {
+    if (i %% 100 == 0) {
+      print (paste(i, "-th line trained."))
+    }
+    sublist <- listTokenized[[i]]
+    for (j in 1:length(sublist)) {
+      sVec <- sublist[[j]]
+      if (length(sVec) < 3) {
+        next
+      }
+      for (k in 1:(length(sVec) - 2)){
+        sWord1 <- sVec[k]
+        sWord2 <- sVec[k + 1]
+        sWord3 <- sVec[k + 2]
+        if (isString(sWord1) && isString(sWord2) && isString(sWord3)) {
+          n1 <- wordToIndexDict[[tolower(sWord1)]]
+          n2 <- wordToIndexDict[[tolower(sWord2)]]
+          n3 <- wordToIndexDict[[tolower(sWord3)]]
+          ## print(paste(sWord1, sWord2, sWord3))
+          if (!is.null(n1) && !is.null(n2) && !is.null(n3)) {
+            ## find the row
+#             found <- FALSE
+#             for (idx in 1:nrow(mat)) {
+#               if (identical(mat[idx,][1:3], row)) {
+#                 found <- TRUE
+#                 break
+#               }
+#             }
+#             if (!found) {
+#               idx <- -1
+#             }
+            ## idx <- findRow3(mat, c(n1, n2, n3), curRow)
+            idx <- which(mat[,1]==n1 & mat[,2] == n2 & mat[,3] == n3, arr.ind = TRUE)
+            if (length(idx) > 0) {
+              mat[idx, 4] <- mat[idx, 4] + 1
+            } else {
+              if (curRow > nrow(mat)){
+                print("Growing matrix..")
+                rowN <- nrow(mat)
+                colN <- ncol(mat)
+                mat <- rbind(mat, matrix(NA, nrow=rowN, ncol=colN))
+                print(paste("Matrix grown.", nrow(mat)))
+              }
+              # Growing 1 row
+              mat[curRow,] <- c(n1, n2, n3, 1)
+              curRow <- curRow + 1
+            }
+          }
+        }
+      }
+    }
+  }
+  mat
+}
+
 blogs <- readFileLines("final/en_US/en_US.blogs.txt")
 news <- readFileLines("final/en_US/en_US.news.txt")
 twitter <- readFileLines("final/en_US/en_US.twitter.txt")
@@ -237,4 +329,12 @@ indexToWordVect <- buildWordDictionary(twitterTokenized, wordToIndexDict, indexT
 saveRDS(wordToIndexDict, "wordToIndexDict.rds")
 saveRDS(indexToWordVect, "indexToWordVect.rds")
 
+wordToIndexDict <- readRDS("wordToIndexDict.rds")
+indexToWordVect <- readRDS("indexToWordVect.rds")
 
+matTrained <- matrix(NA, nrow = 1000, ncol = 4)
+matTrained <- trainMatrix(matTrained, newsTokenized[1:1000], wordToIndexDict)
+saveRDS(matTrained, "matTrainednews1000.rds")
+
+matTrained <- trainMatrix(matTrained, newsTokenized[1001:2000], wordToIndexDict)
+saveRDS(matTrained, "matTrainednews2000.rds")
