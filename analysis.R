@@ -276,6 +276,14 @@ trainMatrix <- function (mat, listTokenized, wordToIndexDict) {
   mat
 }
 
+predict <- function (mat, sWord1, sWord2, wordToIndexDict, indexToWordVect) {
+  sub <- mat[which(mat[,1] == wordToIndexDict[[sWord1]] & mat[,2] == wordToIndexDict[[sWord2]], arr.ind=TRUE),]
+  sub <- data.frame(sub[,3:4])
+  sub <- sub[order(-sub[2]),]
+  sub[1] <- sapply(sub[1], function (idx) { indexToWordVect[idx] }, USE.NAMES = FALSE)
+  return(sub)
+}
+
 blogs <- readFileLines("final/en_US/en_US.blogs.txt")
 news <- readFileLines("final/en_US/en_US.news.txt")
 twitter <- readFileLines("final/en_US/en_US.twitter.txt")
@@ -334,7 +342,7 @@ indexToWordVect <- readRDS("indexToWordVect.rds")
 
 matTrained <- matrix(NA, nrow = 1000, ncol = 4)
 matTrained <- trainMatrix(matTrained, newsTokenized[1:1000], wordToIndexDict)
-saveRDS(matTrained, "matTrainednews1000.rds")
+saveRDS(matTrained, "matTrained_news1000.rds")
 
 matTrained <- trainMatrix(matTrained, newsTokenized[1001:2000], wordToIndexDict)
-saveRDS(matTrained, "matTrainednews2000.rds")
+saveRDS(matTrained, "matTrained_news2000.rds")
