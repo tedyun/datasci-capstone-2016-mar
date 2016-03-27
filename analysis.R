@@ -320,6 +320,9 @@ combineMatrices <- function (mat1, mat2) {
     if (is.na(mat2[i, 1])) {
       break
     }
+    if (i %% 100000 == 0) {
+      print (paste(i, "-th line combined."))
+    }
     n1 <- mat2[i, 1]
     n2 <- mat2[i, 2]
     n3 <- mat2[i, 3]
