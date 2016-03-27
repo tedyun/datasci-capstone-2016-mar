@@ -221,8 +221,17 @@ trainMatrix <- function (mat, listTokenized, wordToIndexDict) {
     }
   }
   print(paste("Starting at", curRow, "th row"))
+  print("Building index..")
+  hashIndex <- hash()
+  for (i in 1:(curRow - 1)) {
+    key <- paste(mat[i, 1], mat[i, 2], mat[i, 3])
+    hashIndex[[key]] <- i
+  }
+  print("Index built.")
+  
+  
   for (i in 1:length(listTokenized)) {
-    if (i %% 100 == 0) {
+    if (i %% 1000 == 0) {
       print (paste(i, "-th line trained."))
     }
     sublist <- listTokenized[[i]]
@@ -253,8 +262,10 @@ trainMatrix <- function (mat, listTokenized, wordToIndexDict) {
 #               idx <- -1
 #             }
             ## idx <- findRow3(mat, c(n1, n2, n3), curRow)
-            idx <- which(mat[,1]==n1 & mat[,2] == n2 & mat[,3] == n3, arr.ind = TRUE)
-            if (length(idx) > 0) {
+            ## idx <- which(mat[,1]==n1 & mat[,2] == n2 & mat[,3] == n3, arr.ind = TRUE)
+            hashkey <- paste(n1, n2, n3)
+            idx <- hashIndex[[hashkey]]
+            if (!is.null(idx)) {
               mat[idx, 4] <- mat[idx, 4] + 1
             } else {
               if (curRow > nrow(mat)){
@@ -266,6 +277,7 @@ trainMatrix <- function (mat, listTokenized, wordToIndexDict) {
               }
               # Growing 1 row
               mat[curRow,] <- c(n1, n2, n3, 1)
+              hashIndex[[hashkey]] <- curRow
               curRow <- curRow + 1
             }
           }
@@ -346,3 +358,14 @@ saveRDS(matTrained, "matTrained_news1000.rds")
 
 matTrained <- trainMatrix(matTrained, newsTokenized[1001:2000], wordToIndexDict)
 saveRDS(matTrained, "matTrained_news2000.rds")
+
+newsTokenized <- readRDS("newsTokenized.rds")
+wordToIndexDict <- readRDS("wordToIndexDict.rds")
+indexToWordVect <- readRDS("indexToWordVect.rds")
+matTrained <- readRDS("matTrained_news2000.rds")
+
+matTrained <- trainMatrix(matTrained, newsTokenized[2001:3000], wordToIndexDict)
+saveRDS(matTrained, "matTrained_news3000.rds")
+
+matTrained <- trainMatrix(matTrained, newsTokenized[3001:10000], wordToIndexDict)
+saveRDS(matTrained, "matTrained_news10000.rds")
