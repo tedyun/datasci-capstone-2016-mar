@@ -387,3 +387,10 @@ blogmatTrained <- matrix(NA, nrow = 1000, ncol = 4)
 blogmatTrained <- trainMatrix(blogmatTrained, blogTokenized[0:10000], wordToIndexDict)
 saveRDS(blogmatTrained, "matTrained_blog10000.rds")
 
+#reverse
+newsmatTrained <- matrix(NA, nrow = 1000, ncol = 4)
+newsmatTrained <- trainMatrix(newsmatTrained, newsTokenized[50000:60000], wordToIndexDict)
+saveRDS(newsmatTrained, "matTrained_news50000-60000.rds")
+
+newsmatTrained <- trainMatrix(newsmatTrained, newsTokenized[60000:70000], wordToIndexDict)
+saveRDS(newsmatTrained, "matTrained_news50000-70000.rds")
