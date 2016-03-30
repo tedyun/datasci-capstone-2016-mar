@@ -17,48 +17,6 @@ shuffleVector <- function (vector){
   vector[shuffle(length(vector))]
 }
 
-predict3 <- function (docFreq4, word1, word2, word3) {
-  name4 <- names(docFreq4)
-  search <- paste0(word1, "_", word2, "_", word3, "_")
-  indices <- which(substr(name4, 1, nchar(search)) == search)
-  result <- sort(docFreq4[indices], decreasing = TRUE)
-  if (length(result) > 0) {
-    result <- result / sum(result)
-    result <- result[1:min(3, length(result))]
-    nm <- names(result)
-    names(result) <- substr(nm, nchar(search) + 1, nchar(nm))
-  }
-  result
-}
-
-predict2 <- function (docFreq3, word1, word2) {
-  name3 <- names(docFreq3)
-  search <- paste0(word1, "_", word2, "_")
-  indices <- which(substr(name3, 1, nchar(search)) == search)
-  result <- sort(docFreq3[indices], decreasing = TRUE)
-  if (length(result) > 0) {
-    result <- result / sum(result)
-    result <- result[1:min(3, length(result))]
-    nm <- names(result)
-    names(result) <- substr(nm, nchar(search) + 1, nchar(nm))
-  }
-  result
-}
-
-predict1 <- function (docFreq2, word1) {
-  name2 <- names(docFreq2)
-  search <- paste0(word1, "_", word2, "_")
-  indices <- which(substr(name2, 1, nchar(search)) == search)
-  result <- sort(docFreq2[indices], decreasing = TRUE)
-  if (length(result) > 0) {
-    result <- result / sum(result)
-    result <- result[1:min(3, length(result))]
-    nm <- names(result)
-    names(result) <- substr(nm, nchar(search) + 1, nchar(nm))
-  }
-  result
-}
-
 # drop all numbers smaller than or equal to the cutoff
 dropSmallNumbers <- function (docFreq, cutoff) {
   docFreq[docFreq > cutoff]
@@ -87,9 +45,9 @@ dropSmallNumbers <- function (docFreq, cutoff) {
 # saveRDS(trainingData, "trainingData.rds")
 # saveRDS(testData, "testData.rds")
 # 
-# 
-# trainingData <- readRDS("trainingData.rds")
-# 
+
+trainingData <- readRDS("trainingData.rds")
+
 # testData <- readRDS("testData.rds")
 # 
 # trainingDFM4 <- dfm(trainingData, toLower = TRUE, removeNumbers = TRUE, removePunct = TRUE, removeSeparators = TRUE, removeTwitter = FALSE, language="english", ngrams=4)
@@ -118,3 +76,17 @@ dropSmallNumbers <- function (docFreq, cutoff) {
 # 
 # gram2FreqDrop1 <- dropSmallNumbers(gram2Freq, 1)
 # saveRDS(gram2FreqDrop1, "gram2FreqDrop1.rds")
+
+
+
+
+## This time with stopwords removal
+
+trainingCleanDFM4 <- dfm(trainingData, toLower = TRUE, removeNumbers = TRUE, removePunct = TRUE, removeSeparators = TRUE, removeTwitter = FALSE, language="english", ngrams = 4, ignoredFeatures = stopwords(kind = "english", verbose = FALSE))
+saveRDS(trainingCleanDFM4, "trainingCleanDFM4.rds")
+
+# gram4Freq <- docfreq(trainingDFM4)
+# saveRDS(gram4Freq, "gram4Freq.rds")
+# 
+# gram4FreqDrop1 <- dropSmallNumbers(gram4Freq, 1)
+# saveRDS(gram4FreqDrop1, "gram4FreqDrop1.rds")
