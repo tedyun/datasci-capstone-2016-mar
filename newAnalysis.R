@@ -49,7 +49,16 @@ dropSmallNumbers <- function (docFreq, cutoff) {
 trainingData <- readRDS("trainingData.rds")
 
 # testData <- readRDS("testData.rds")
-# 
+
+trainingDFM5 <- dfm(trainingData, toLower = TRUE, removeNumbers = TRUE, removePunct = TRUE, removeSeparators = TRUE, removeTwitter = FALSE, language="english", ngrams=5)
+saveRDS(trainingDFM5, "trainingDFM5.rds")
+
+gram5Freq <- docfreq(trainingDFM5)
+saveRDS(gram5Freq, "gram5Freq.rds")
+
+gram5FreqDrop1 <- dropSmallNumbers(gram5Freq, 1)
+saveRDS(gram5FreqDrop1, "gram5FreqDrop1.rds")
+ 
 # trainingDFM4 <- dfm(trainingData, toLower = TRUE, removeNumbers = TRUE, removePunct = TRUE, removeSeparators = TRUE, removeTwitter = FALSE, language="english", ngrams=4)
 # saveRDS(trainingDFM4, "trainingDFM4.rds")
 # 
@@ -82,11 +91,21 @@ trainingData <- readRDS("trainingData.rds")
 
 ## This time with stopwords removal
 
-trainingCleanDFM4 <- dfm(trainingData, toLower = TRUE, removeNumbers = TRUE, removePunct = TRUE, removeSeparators = TRUE, removeTwitter = FALSE, language="english", ngrams = 4, ignoredFeatures = stopwords(kind = "english", verbose = FALSE))
-saveRDS(trainingCleanDFM4, "trainingCleanDFM4.rds")
-
-# gram4Freq <- docfreq(trainingDFM4)
-# saveRDS(gram4Freq, "gram4Freq.rds")
+## TODO: how to do this without memory overflow
+# trainingCleanDFM4 <- dfm(trainingData, toLower = TRUE, removeNumbers = TRUE, removePunct = TRUE, removeSeparators = TRUE, removeTwitter = FALSE, language="english", ngrams = 4, ignoredFeatures = stopwords("english"))
+# saveRDS(trainingCleanDFM4, "trainingCleanDFM4.rds")
+#
+# gramClean4Freq <- docfreq(trainingCleanDFM4)
+# saveRDS(gramClean4Freq, "gramClean4Freq")
 # 
-# gram4FreqDrop1 <- dropSmallNumbers(gram4Freq, 1)
-# saveRDS(gram4FreqDrop1, "gram4FreqDrop1.rds")
+# gramClean4FreqDrop1 <- dropSmallNumbers(gramClean4Freq, 1)
+# saveRDS(gramClean4FreqDrop1, "gramClean4FreqDrop1.rds")
+
+# trainingCleanDFM3 <- dfm(trainingData, toLower = TRUE, removeNumbers = TRUE, removePunct = TRUE, removeSeparators = TRUE, removeTwitter = FALSE, language="english", ngrams = 3, ignoredFeatures = stopwords("english"))
+# saveRDS(trainingCleanDFM3, "trainingCleanDFM3.rds")
+# 
+# gramClean3Freq <- docfreq(trainingCleanDFM3)
+# saveRDS(gramClean3Freq, "gramClean3Freq.rds")
+# 
+# gramClean3FreqDrop1 <- dropSmallNumbers(gramClean3Freq, 1)
+# saveRDS(gramClean3FreqDrop1, "gramClean3FreqDrop1.rds")
