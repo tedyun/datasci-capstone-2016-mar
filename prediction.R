@@ -43,12 +43,11 @@ predict1 <- function (docFreq2, word1) {
 }
 
 ## predict the next text using the last "ngram" words in the text
+## "tokens" must be a character vector whose length is >= ngram
 ## (hence docFreq should be (ngram + 1) frequency dictionary)
-predict <- function (text, docFreq, ngram) {
-  text  <- tolower(text)
-  tokens <- tokenize(text, removeNumbers = TRUE, removePunct = TRUE, removeSeparators = TRUE, removeTwitter = FALSE)[[1]]
+predict <- function (tokens, docFreq, ngram) {
   if (length(tokens) < ngram) {
-    return()
+    return(character())
   }
   
   tokens <- tokens[(length(tokens) - ngram + 1):length(tokens)]
@@ -61,11 +60,41 @@ predict <- function (text, docFreq, ngram) {
   
   if (length(result) > 0) {
     result <- result / sum(result)
-    result <- result[1:min(3, length(result))]
+    # result <- result[1:min(3, length(result))]
     nm <- names(result)
     names(result) <- substr(nm, nchar(search) + 1, nchar(nm))
   }
   result
+}
+
+# gramFreq <- list()
+# gramFreq[[2]] <- readRDS("gram2FreqDrop1.rds")
+# gramFreq[[3]] <- readRDS("gram3FreqDrop1.rds")
+# gramFreq[[4]] <- readRDS("gram4FreqDrop1.rds")
+# gramFreq[[5]] <- readRDS("gram5FreqDrop1.rds")
+# saveRDS(gramFreq, "gramFreq.rds")
+
+predictNaiveBackup <- function (text) {
+  prediction <- character()
+  
+  text  <- tolower(text)
+  tokens <- tokenize(text, removeNumbers = TRUE, removePunct = TRUE, removeSeparators = TRUE, removeTwitter = FALSE)[[1]]
+  len <- length(tokens)
+  if (len < 1) {
+    return(prediction)
+  }
+  
+  result <- numeric()
+  for (n in min(5, len + 1):2) {
+    print(paste("Trying", n, "gram.."))
+    result <- predict(tokens, gramFreq[[n]], n - 1)
+    if (length(result) > 0) {
+      print(paste("Using", n, "gram."))
+      prediction <- names(result)[1:min(3, length(result))]
+      break;
+    }
+  }
+  return(prediction)
 }
 
 
