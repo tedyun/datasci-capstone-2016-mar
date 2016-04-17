@@ -1,9 +1,9 @@
 library(shiny)
 library(quanteda)
 
-gramFreq <- readRDS("gramFreq.rds")
+gramFreqLight <- readRDS("gramFreqLight.rds")
 
-predict <- function (tokens, docFreq, ngram) {
+predict <- function (tokens, docFreq, ngram, maxSuggest, excludeWords) {
   if (length(tokens) < ngram) {
     return(character())
   }
@@ -18,14 +18,23 @@ predict <- function (tokens, docFreq, ngram) {
   
   if (length(result) > 0) {
     result <- result / sum(result)
+    cutLength <- maxSuggest + length(excludeWords)
+    result <- result[1:min(cutLength, length(result))]
     nm <- names(result)
     names(result) <- substr(nm, nchar(search) + 1, nchar(nm))
+    # exclude words
+    if (length(excludeWords) > 0) {
+      result <- result[!(names(result) %in% excludeWords)]
+    }
   }
+  result <- result[1:min(maxSuggest, length(result))]
   result
 }
 
-predictNaiveBackup <- function (text) {
-  print("Prediction function started.")
+# predict using "Stupid Backoff" model
+alpha <- 0.4
+predictStupidBackoff <- function (text) {
+  print(paste0("Start prediction for '", text, "'"))
   prediction <- character()
   
   text  <- tolower(text)
@@ -36,14 +45,19 @@ predictNaiveBackup <- function (text) {
   }
   
   result <- numeric()
+  counter <- 0
+  excludeWords <- character()
   for (n in min(5, len + 1):2) {
-    result <- predict(tokens, gramFreq[[n]], n - 1)
-    if (length(result) > 0) {
-      prediction <- names(result)[1:min(3, length(result))]
-      break;
-    }
+    counter <- counter + 1
+    maxSuggest <- counter * 3
+    result <- c(result, alpha^(counter - 1) * predict(tokens, gramFreqLight[[n]], n - 1, maxSuggest, excludeWords))
+    excludeWords <- c(excludeWords, names(result))
   }
-  print("Prediction function ended.")
+  result <- sort(result, decreasing = TRUE)
+  result <- result[1:min(3, length(result))]
+  print(result)
+  prediction <- names(result)
+  print(paste0("Finished prediction for '", text, "'"))
   return(prediction)
 }
 
@@ -51,14 +65,14 @@ shinyServer(function(input, output) {
   result <- reactive({
     if (input$submitButton > 0) {
       withProgress(message="Predicting next word..", {
-        isolate(predictNaiveBackup(input$predInputText))
+        isolate(predictStupidBackoff(input$predInputText))
       })
     }
   })
   
-  output$inProgress <- renderText({
-    
-  })
+#   output$inProgress <- renderText({
+#     "Click submit button to show predicted words."
+#   })
   
   output$predWord1 <- renderText({ 
     result()[1]

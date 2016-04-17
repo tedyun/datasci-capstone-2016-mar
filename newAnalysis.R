@@ -83,10 +83,21 @@ saveRDS(gram5FreqDrop1, "gram5FreqDrop1.rds")
 # gram2Freq <- docfreq(trainingDFM2)
 # saveRDS(gram2Freq, "gram2Freq.rds")
 # 
+
 # gram2FreqDrop1 <- dropSmallNumbers(gram2Freq, 1)
 # saveRDS(gram2FreqDrop1, "gram2FreqDrop1.rds")
 
+gram2FreqDrop1 <- readRDS("gram2FreqDrop1.rds")
+gram2FreqDrop4 <- dropSmallNumbers(gram2FreqDrop1, 4)
+saveRDS(gram2FreqDrop4, "gram2FreqDrop4.rds")
 
+
+trainingData <- readRDS("trainingData.rds")
+trainingDFM1 <- dfm(trainingData, toLower = TRUE, removeNumbers = TRUE, removePunct = TRUE, removeSeparators = TRUE, removeTwitter = FALSE, language="english", ngrams=1)
+saveRDS(trainingDFM1, "trainingDFM1.rds")
+
+gram1Freq <- docfreq(trainingDFM1)
+saveRDS(gram1Freq, "gram1Freq.rds")
 
 
 ## This time with stopwords removal
