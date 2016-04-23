@@ -24,10 +24,7 @@ Data
 - **News** - 77 thousand texts, 35 words each.
 - **Twitter** - 2.3 million texts, 13 words each.
 
-Data
+Future Direction
 ========================================================
-- Trained with a vast amount of data from blogs, news, and twitter.
-- **Blog** - 899 thousand texts, 42 words each.
-- **News** - 77 thousand texts, 35 words each.
-- **Twitter** - 2.3 million texts, 13 words each.
+- 
 
