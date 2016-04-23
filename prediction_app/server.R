@@ -75,12 +75,12 @@ shinyServer(function(input, output) {
 #   })
   
   output$predWord1 <- renderText({ 
-    result()[1]
+    paste0("choice 1: <strong>", result()[1], "</strong>")
   })
   output$predWord2 <- renderText({ 
-    result()[2]
+    paste0("choice 2: <strong>", result()[2], "</strong>")
   })
   output$predWord3 <- renderText({ 
-    result()[3]
+    paste0("choice 3: <strong>", result()[3], "</strong>")
   })
 })

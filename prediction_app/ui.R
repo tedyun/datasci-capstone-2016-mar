@@ -8,13 +8,13 @@ shinyUI(fluidPage(
     position = "right",
     sidebarPanel(
       h3("Predictions"),
-      textOutput("inProgress"),
-      textOutput("predWord1"),
-      textOutput("predWord2"),
-      textOutput("predWord3")
+      htmlOutput("predWord1"),
+      htmlOutput("predWord2"),
+      htmlOutput("predWord3")
     ),
     mainPanel(
-      textInput("predInputText", label = "Input Text", value = ""),
+      helpText("Click the Submit button to predict the next word."),
+      textInput("predInputText", label = "Input Sentence", value = ""),
       actionButton("submitButton", "Submit")
     )
   )

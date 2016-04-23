@@ -1,8 +1,8 @@
 name: predict_word
 account: tedyun
 server: shinyapps.io
-bundleId: 421962
+bundleId: 431173
 url: https://tedyun.shinyapps.io/predict_word/
-when: 1460852654.07012
+when: 1461452590.35759
 asMultiple: FALSE
 asStatic: FALSE
