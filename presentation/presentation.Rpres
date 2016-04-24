@@ -8,7 +8,7 @@ A light-weight application for predicting the next word given a sentence.
 
 ![App Screenshot](capture_withborder.png)
 
-Display three choices.
+Three word choices for a given sentence.
 
 Algorithm
 ========================================================
@@ -24,7 +24,13 @@ Data
 - **News** - 77 thousand texts, 35 words each.
 - **Twitter** - 2.3 million texts, 13 words each.
 
-Future Direction
+Future Upgrade
 ========================================================
-- 
+- Adaptive prediction based on the user's input history.
+- Provide additional dictionaries for professionals, e.g.<br>
+  Physicist - corpora from physics journals and academic blogs,<br>
+  Medical doctors - corpora from top medical journals,<br>
+  ...
+- Partial word prediction -- prediction list changes as the user types.
+- Add n-grams with n > 5 (will require better optimization technique).
 

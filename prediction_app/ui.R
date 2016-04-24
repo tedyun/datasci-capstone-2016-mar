@@ -13,7 +13,7 @@ shinyUI(fluidPage(
       htmlOutput("predWord3")
     ),
     mainPanel(
-      helpText("Click the Submit button to predict the next word."),
+      helpText("Click Submit button to predict the next word."),
       textInput("predInputText", label = "Input Sentence", value = ""),
       actionButton("submitButton", "Submit")
     )
