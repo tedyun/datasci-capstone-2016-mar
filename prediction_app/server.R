@@ -56,7 +56,14 @@ predictStupidBackoff <- function (text) {
   result <- sort(result, decreasing = TRUE)
   result <- result[1:min(3, length(result))]
   print(result)
-  prediction <- names(result)
+  if (is.na(result) || !length(result)) {
+    prediction <- character()
+  } else {
+    prediction <- names(result)
+  }
+  prediction <- c(prediction, "the", "to", "a", "and", "i", "of")
+  prediction <- unique(prediction)
+  prediction <- prediction[1:3]
   print(paste0("Finished prediction for '", text, "'"))
   return(prediction)
 }
